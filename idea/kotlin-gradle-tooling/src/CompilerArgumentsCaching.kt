@@ -127,3 +127,13 @@ class CompilerArgumentsMapperWithMerge : CompilerArgumentsMapper(), IWithMergeMa
         }
     }
 }
+
+data class CompilerArgumentMappersContainer @JvmOverloads constructor(
+    val projectCompilerArgumentsMapper: CompilerArgumentsMapperWithMerge = CompilerArgumentsMapperWithMerge(),
+    val projectMppCompilerArgumentsMapper: CompilerArgumentsMapperWithMerge = CompilerArgumentsMapperWithMerge()
+) {
+    @JvmOverloads
+    fun mergeArgumentsFromMapper(mapper: ICompilerArgumentsMapper, isMpp: Boolean = false) {
+        if (isMpp) projectMppCompilerArgumentsMapper.mergeMapper(mapper) else projectCompilerArgumentsMapper.mergeMapper(mapper)
+    }
+}

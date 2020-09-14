@@ -62,6 +62,7 @@ var DataNode<ModuleData>.kotlinNativeHome
         by CopyableDataNodeUserDataProperty(Key.create<String>("KOTLIN_NATIVE_HOME"))
 var DataNode<out ModuleData>.implementedModuleNames
         by NotNullableCopyableDataNodeUserDataProperty(Key.create<List<String>>("IMPLEMENTED_MODULE_NAME"), emptyList())
+
 // Project is usually the same during all import, thus keeping Map Project->Dependencies makes model a bit more complicated but allows to avoid future problems
 var DataNode<out ModuleData>.dependenciesCache
         by DataNodeUserDataProperty(
@@ -69,8 +70,8 @@ var DataNode<out ModuleData>.dependenciesCache
         )
 var DataNode<out ModuleData>.pureKotlinSourceFolders
         by NotNullableCopyableDataNodeUserDataProperty(Key.create<List<String>>("PURE_KOTLIN_SOURCE_FOLDER"), emptyList())
-var DataNode<ProjectData>.projectCompilerArgumentsMapper
-        by NotNullableCopyableDataNodeUserDataProperty(Key.create("COMPILER_ARGUMENTS_MAPPER"), CompilerArgumentsMapperWithMerge())
+var DataNode<ProjectData>.projectCompilerArgumentMapperContainer
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create("COMPILER_ARGUMENT_MAPPER_CONTAINER"), CompilerArgumentMappersContainer())
 
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
@@ -235,7 +236,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.coroutines = gradleModel.coroutines
         ideModule.platformPluginId = gradleModel.platformPluginId
         with(gradleModel.compilerArgumentsMapper) {
-            ideProject.projectCompilerArgumentsMapper.mergeMapper(this)
+            ideProject.projectCompilerArgumentMapperContainer.mergeArgumentsFromMapper(this)
             clear()
         }
 

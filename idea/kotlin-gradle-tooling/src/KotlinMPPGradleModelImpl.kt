@@ -103,6 +103,16 @@ data class KotlinCompilationArgumentsImpl(
     )
 }
 
+data class KotlinCompilationCachedArgumentsImpl(
+    override val defaultArguments: Array<Int>,
+    override val currentArguments: Array<Int>
+) : KotlinCompilationCachedArguments {
+    constructor(arguments: KotlinCompilationCachedArguments) : this(
+        arguments.defaultArguments,
+        arguments.currentArguments
+    )
+}
+
 data class KotlinNativeCompilationExtensionsImpl(
     override val konanTarget: String
 ) : KotlinNativeCompilationExtensions {

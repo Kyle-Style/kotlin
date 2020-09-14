@@ -290,11 +290,11 @@ fun configureFacetByGradleModule(
     ideModule.hasExternalSdkConfiguration = sourceSetNode?.data?.sdkName != null
 
     val projectDataNode = moduleNode.getDataNode(ProjectKeys.PROJECT) ?: return null
-    val mapper = projectDataNode.projectCompilerArgumentsMapper
+    val generalMapper = projectDataNode.projectCompilerArgumentMapperContainer.projectCompilerArgumentsMapper
 
     val cachedArgsInfo = moduleNode.cachedCompilerArgumentsBySourceSet?.get(sourceSetName ?: "main")
     if (cachedArgsInfo != null) {
-        configureFacetByCachedCompilerArguments(cachedArgsInfo, mapper, kotlinFacet, modelsProvider)
+        configureFacetByCachedCompilerArguments(cachedArgsInfo, generalMapper, kotlinFacet, modelsProvider)
     }
 
     with(kotlinFacet.configuration.settings) {
@@ -345,10 +345,10 @@ private fun getExplicitOutputPath(moduleNode: DataNode<ModuleData>, platformKind
     }
 
     val projectDataNode = moduleNode.getDataNode(ProjectKeys.PROJECT) ?: return null
-    val mapper = projectDataNode.projectCompilerArgumentsMapper
+    val generalMapper = projectDataNode.projectCompilerArgumentMapperContainer.projectCompilerArgumentsMapper
 
     val k2jsArgumentList = moduleNode.cachedCompilerArgumentsBySourceSet?.get(sourceSet)
-        ?.currentCachedArgumentIds?.map { mapper.getCommonArgument(it) }
+        ?.currentCachedArgumentIds?.map { generalMapper.getCommonArgument(it) }
         ?: return null
     return K2JSCompilerArguments().apply { parseCommandLineArguments(k2jsArgumentList, this) }.outputFile
 }

@@ -93,6 +93,11 @@ interface KotlinCompilationArguments : Serializable {
     val currentArguments: Array<String>
 }
 
+interface KotlinCompilationCachedArguments : Serializable {
+    val defaultArguments: Array<Int>
+    val currentArguments: Array<Int>
+}
+
 interface KotlinNativeCompilationExtensions : Serializable {
     val konanTarget: String // represents org.jetbrains.kotlin.konan.target.KonanTarget
 }
