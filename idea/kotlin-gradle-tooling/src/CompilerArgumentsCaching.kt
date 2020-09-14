@@ -12,22 +12,71 @@ typealias CachedArgumentIdType = Int
 typealias ClasspathArgumentCacheIdType = Array<Int>
 
 interface CachedArgsInfo : Serializable {
-    val currentCachedArgumentIds: Array<CachedArgumentIdType>
-    val currentCachedClasspathArgumentIds: Array<ClasspathArgumentCacheIdType>
-    val defaultCachedArgumentsIds: Array<CachedArgumentIdType>
-    val dependencyClasspathCacheIds: Array<ClasspathArgumentCacheIdType>
+    val currentCachedCompilerArgumentsBucket: CachedCompilerArgumentsBucket
+    val defaultCachedCompilerArgumentsBucket: CachedCompilerArgumentsBucket
+    val dependencyClasspathCacheIds: ClasspathArgumentCacheIdType
+}
+
+class CachedCompilerArgumentsBucket private constructor(
+    val cachedGeneralArguments: Array<Int>,
+    val cachedClasspath: Array<Int>,
+    val cachedPluginClasspath: Array<Int>,
+    val cachedFriendPaths: Array<Int>
+) {
+    constructor(otherBucket: CachedCompilerArgumentsBucket) : this(
+        arrayOf(*otherBucket.cachedGeneralArguments),
+        arrayOf(*otherBucket.cachedClasspath),
+        arrayOf(*otherBucket.cachedPluginClasspath),
+        arrayOf(*otherBucket.cachedFriendPaths)
+    )
+
+    fun collectArgumentsList(mapper: ICompilerArgumentsMapper): List<String> =
+        cachedGeneralArguments.map { mapper.getCommonArgument(it) } +
+                "-classpath" + mapper.getClasspathArgument(cachedClasspath, File.pathSeparator) +
+                "$PLUGIN_CLASSPATH_PREFIX${mapper.getClasspathArgument(cachedPluginClasspath, ",")}" +
+                "$FRIEND_PATH_PREFIX${mapper.getClasspathArgument(cachedPluginClasspath, ",")}"
+
+    companion object {
+        const val FRIEND_PATH_PREFIX = "-Xfriend-paths="
+        const val PLUGIN_CLASSPATH_PREFIX = "-Xplugin="
+        val classpathArgPointers = setOf("-classpath", "-cp")
+
+        fun parseBucketFromArguments(arguments: List<String>, mapper: ICompilerArgumentsMapper): CachedCompilerArgumentsBucket {
+
+            val pluginClasspathArgument = arguments.firstOrNull { it.startsWith(PLUGIN_CLASSPATH_PREFIX) }
+            val friendPathsArgument = arguments.firstOrNull { it.startsWith(FRIEND_PATH_PREFIX) }
+            val classpathArgument = arguments.mapIndexedNotNull { index, s ->
+                arguments[index + 1].takeIf { s in classpathArgPointers }
+            }.firstOrNull()
+
+            // TODO(ychernyshev) Does the order of arguments required here?
+            val cachedGeneralArguments =
+                (arguments - pluginClasspathArgument - friendPathsArgument - classpathArgument - classpathArgPointers)
+                    .filterNotNull()
+                    .map { mapper.cacheCommonArgument(it) }
+                    .toTypedArray()
+
+            val cachedClasspath = classpathArgument?.let { mapper.cacheClasspathArgument(it, File.pathSeparator) } ?: emptyArray()
+            val cachedPluginClasspath =
+                pluginClasspathArgument?.removePrefix(PLUGIN_CLASSPATH_PREFIX)?.let { mapper.cacheClasspathArgument(it, ",") }
+                    ?: emptyArray()
+            val cachedFriendPaths =
+                friendPathsArgument?.removePrefix(FRIEND_PATH_PREFIX)?.let { mapper.cacheClasspathArgument(it, ",") } ?: emptyArray()
+
+            return CachedCompilerArgumentsBucket(cachedGeneralArguments, cachedClasspath, cachedPluginClasspath, cachedFriendPaths)
+        }
+
+    }
 }
 
 class CachedArgsInfoImpl(
-    override val currentCachedArgumentIds: Array<CachedArgumentIdType>,
-    override val currentCachedClasspathArgumentIds: Array<ClasspathArgumentCacheIdType>,
-    override val defaultCachedArgumentsIds: Array<CachedArgumentIdType>,
-    override val dependencyClasspathCacheIds: Array<ClasspathArgumentCacheIdType>
+    override val currentCachedCompilerArgumentsBucket: CachedCompilerArgumentsBucket,
+    override val defaultCachedCompilerArgumentsBucket: CachedCompilerArgumentsBucket,
+    override val dependencyClasspathCacheIds: ClasspathArgumentCacheIdType
 ) : CachedArgsInfo {
     constructor(cachedArgsInfo: CachedArgsInfo) : this(
-        arrayOf(*cachedArgsInfo.currentCachedArgumentIds),
-        arrayOf(*cachedArgsInfo.currentCachedClasspathArgumentIds),
-        arrayOf(*cachedArgsInfo.defaultCachedArgumentsIds),
+        cachedArgsInfo.currentCachedCompilerArgumentsBucket,
+        cachedArgsInfo.defaultCachedCompilerArgumentsBucket,
         arrayOf(*cachedArgsInfo.dependencyClasspathCacheIds)
     )
 }
@@ -47,8 +96,8 @@ interface ICompilerArgumentsMapper : Serializable {
     fun getArgumentCache(argument: String): Int?
     fun cacheCommonArgument(commonArgument: String): Int
     fun getCommonArgument(id: Int): String
-    fun cacheClasspathArgument(classpathArgument: String): Array<Int>
-    fun getClasspathArgument(ids: Array<Int>): String
+    fun cacheClasspathArgument(classpathArgument: String, separator: String): Array<Int>
+    fun getClasspathArgument(ids: Array<Int>, separator: String): String
     fun clear()
     fun copyCache(): Map<Int, String>
 }
@@ -77,10 +126,12 @@ open class CompilerArgumentsMapper(val initialId: Int = 0) : ICompilerArgumentsM
 
     override fun getCommonArgument(id: Int): String = idToCompilerArguments[id]!!
 
-    override fun cacheClasspathArgument(classpathArgument: String): Array<Int> =
-        classpathArgument.split(File.pathSeparator).map { cacheCommonArgument(it) }.toTypedArray()
+    override fun cacheClasspathArgument(classpathArgument: String, separator: String): Array<Int> =
+        classpathArgument.split(separator).map { cacheCommonArgument(it) }.toTypedArray()
 
-    override fun getClasspathArgument(ids: Array<Int>): String = ids.joinToString(File.pathSeparator) { getCommonArgument(it) }
+    override fun getClasspathArgument(ids: Array<Int>, separator: String): String =
+        ids.joinToString(separator) { getCommonArgument(it) }
+
     override fun clear() {
         idToCompilerArguments.clear()
         compilerArgumentToId.clear()

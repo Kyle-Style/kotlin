@@ -168,18 +168,6 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
         }
     }
 
-    private fun List<String>.divideToCommonAndClasspathArguments(
-        commonArguments: MutableList<String>,
-        classpathArguments: MutableList<String>
-    ) {
-        val classpathArgumentsIndexes = flatMapIndexed { index: Int, s: String ->
-            if ("-classpath" in s || "-cp" in s) listOf(index, index + 1) else emptyList()
-        }.toSet()
-        filterIndexed { index, _ -> index !in classpathArgumentsIndexes }.toCollection(commonArguments)
-        classpathArgumentsIndexes.map { this[it] }
-            .toCollection(classpathArguments)
-    }
-
     override fun buildAll(modelName: String?, project: Project): KotlinGradleModelImpl {
         val modelDetachableMapper = modelBuilderMapper.checkoutMapper()
 
@@ -196,27 +184,17 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
             val currentArguments = compileTask.getCompilerArguments("getSerializedCompilerArguments")
                 ?: compileTask.getCompilerArguments("getSerializedCompilerArgumentsIgnoreClasspathIssues")
                 ?: emptyList()
-
-
-            val currentClasspathArguments = mutableListOf<String>()
-            val currentCommonArguments = mutableListOf<String>()
-            currentArguments.divideToCommonAndClasspathArguments(currentCommonArguments, currentClasspathArguments)
-            val currentCommonArgumentCacheIds =
-                currentCommonArguments.map { modelDetachableMapper.cacheCommonArgument(it) }.toTypedArray()
-            val currentClasspathArgumentCacheIds =
-                currentClasspathArguments.map { modelDetachableMapper.cacheClasspathArgument(it) }.toTypedArray()
-
+            val currentCompilerArgumentsBucket =
+                CachedCompilerArgumentsBucket.parseBucketFromArguments(currentArguments, modelDetachableMapper)
             val defaultArguments = compileTask.getCompilerArguments("getDefaultSerializedCompilerArguments").orEmpty()
-            val defaultCachedArgumentIds =
-                defaultArguments.map { modelDetachableMapper.cacheCommonArgument(it) }.toTypedArray()
-
+            val defaultCompilerArgumentsBucket =
+                CachedCompilerArgumentsBucket.parseBucketFromArguments(defaultArguments, modelDetachableMapper)
             val dependencyClasspath = compileTask.getDependencyClasspath()
             val dependencyClasspathCacheIds =
-                dependencyClasspath.map { modelDetachableMapper.cacheClasspathArgument(it) }.toTypedArray()
+                dependencyClasspath.map { modelDetachableMapper.cacheCommonArgument(it) }.toTypedArray()
             cachedArgumentsBySourceSet[sourceSetName] = CachedArgsInfoImpl(
-                currentCommonArgumentCacheIds,
-                currentClasspathArgumentCacheIds,
-                defaultCachedArgumentIds,
+                currentCompilerArgumentsBucket,
+                defaultCompilerArgumentsBucket,
                 dependencyClasspathCacheIds
             )
             extraProperties.acknowledgeTask(compileTask, null)

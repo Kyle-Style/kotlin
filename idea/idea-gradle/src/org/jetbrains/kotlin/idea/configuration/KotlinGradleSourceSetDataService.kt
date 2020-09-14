@@ -318,12 +318,9 @@ private fun configureFacetByCachedCompilerArguments(
     kotlinFacet: KotlinFacet,
     modelsProvider: IdeModifiableModelsProvider
 ) {
-    val currentArguments = cachedArgsInfo.currentCachedArgumentIds.map { mapper.getCommonArgument(it) } +
-            cachedArgsInfo.currentCachedClasspathArgumentIds.map { mapper.getClasspathArgument(it) }
-
-    val defaultArguments = cachedArgsInfo.defaultCachedArgumentsIds.map { mapper.getCommonArgument(it) }
-
-    val dependencyClasspath = cachedArgsInfo.dependencyClasspathCacheIds.map { mapper.getClasspathArgument(it) }
+    val currentArguments = cachedArgsInfo.currentCachedCompilerArgumentsBucket.collectArgumentsList(mapper)
+    val defaultArguments = cachedArgsInfo.defaultCachedCompilerArgumentsBucket.collectArgumentsList(mapper)
+    val dependencyClasspath = cachedArgsInfo.dependencyClasspathCacheIds.map { mapper.getCommonArgument(it) }
 
     val argsInfo = ArgsInfoImpl(currentArguments, defaultArguments, dependencyClasspath)
     configureFacetByCompilerArguments(kotlinFacet, argsInfo, modelsProvider)
@@ -348,7 +345,7 @@ private fun getExplicitOutputPath(moduleNode: DataNode<ModuleData>, platformKind
     val generalMapper = projectDataNode.projectCompilerArgumentMapperContainer.projectCompilerArgumentsMapper
 
     val k2jsArgumentList = moduleNode.cachedCompilerArgumentsBySourceSet?.get(sourceSet)
-        ?.currentCachedArgumentIds?.map { generalMapper.getCommonArgument(it) }
+        ?.currentCachedCompilerArgumentsBucket?.collectArgumentsList(generalMapper)
         ?: return null
     return K2JSCompilerArguments().apply { parseCommandLineArguments(k2jsArgumentList, this) }.outputFile
 }
