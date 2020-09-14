@@ -30,11 +30,15 @@ class CachedCompilerArgumentsBucket private constructor(
         arrayOf(*otherBucket.cachedFriendPaths)
     )
 
-    fun collectArgumentsList(mapper: ICompilerArgumentsMapper): List<String> =
-        cachedGeneralArguments.map { mapper.getCommonArgument(it) } +
-                "-classpath ${mapper.getClasspathArgument(cachedClasspath, File.pathSeparator)}" +
+    fun collectArgumentsList(mapper: ICompilerArgumentsMapper): List<String> {
+        val res = cachedGeneralArguments.map { mapper.getCommonArgument(it) } +
                 "$PLUGIN_CLASSPATH_PREFIX${mapper.getClasspathArgument(cachedPluginClasspath, ",")}" +
                 "$FRIEND_PATH_PREFIX${mapper.getClasspathArgument(cachedPluginClasspath, ",")}"
+        return res.toMutableList().apply {
+            mapper.getClasspathArgument(cachedClasspath, File.pathSeparator).takeIf { it.isNotEmpty() }?.let { listOf("-classpath", it) }
+                ?.also { addAll(it) }
+        }
+    }
 
     companion object {
         const val FRIEND_PATH_PREFIX = "-Xfriend-paths="
@@ -77,8 +81,8 @@ class CachedArgsInfoImpl(
     override val dependencyClasspathCacheIds: ClasspathArgumentCacheIdType
 ) : CachedArgsInfo {
     constructor(cachedArgsInfo: CachedArgsInfo) : this(
-        cachedArgsInfo.currentCachedCompilerArgumentsBucket,
-        cachedArgsInfo.defaultCachedCompilerArgumentsBucket,
+        CachedCompilerArgumentsBucket(cachedArgsInfo.currentCachedCompilerArgumentsBucket),
+        CachedCompilerArgumentsBucket(cachedArgsInfo.defaultCachedCompilerArgumentsBucket),
         arrayOf(*cachedArgsInfo.dependencyClasspathCacheIds)
     )
 }
