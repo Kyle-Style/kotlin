@@ -32,7 +32,7 @@ class CachedCompilerArgumentsBucket private constructor(
 
     fun collectArgumentsList(mapper: ICompilerArgumentsMapper): List<String> =
         cachedGeneralArguments.map { mapper.getCommonArgument(it) } +
-                "-classpath" + mapper.getClasspathArgument(cachedClasspath, File.pathSeparator) +
+                "-classpath ${mapper.getClasspathArgument(cachedClasspath, File.pathSeparator)}" +
                 "$PLUGIN_CLASSPATH_PREFIX${mapper.getClasspathArgument(cachedPluginClasspath, ",")}" +
                 "$FRIEND_PATH_PREFIX${mapper.getClasspathArgument(cachedPluginClasspath, ",")}"
 
@@ -45,18 +45,20 @@ class CachedCompilerArgumentsBucket private constructor(
 
             val pluginClasspathArgument = arguments.firstOrNull { it.startsWith(PLUGIN_CLASSPATH_PREFIX) }
             val friendPathsArgument = arguments.firstOrNull { it.startsWith(FRIEND_PATH_PREFIX) }
-            val classpathArgument = arguments.mapIndexed { index, s ->
-                if (s in classpathArgPointers) arguments[index + 1] else null
-            }.firstOrNull()
+            val classpathArguments = arguments.flatMapIndexed { index, s ->
+                if (s in classpathArgPointers) listOf(s, arguments[index + 1]) else emptyList()
+            }
 
             // TODO(ychernyshev) Does the order of arguments required here?
             val cachedGeneralArguments =
-                (arguments - pluginClasspathArgument - friendPathsArgument - classpathArgument - classpathArgPointers)
+                (arguments - pluginClasspathArgument - friendPathsArgument - classpathArguments - classpathArgPointers)
                     .filterNotNull()
                     .map { mapper.cacheCommonArgument(it) }
                     .toTypedArray()
 
-            val cachedClasspath = classpathArgument?.let { mapper.cacheClasspathArgument(it, File.pathSeparator) } ?: emptyArray()
+            val cachedClasspath = classpathArguments.lastOrNull()
+                ?.let { mapper.cacheClasspathArgument(it, File.pathSeparator) } ?: emptyArray()
+
             val cachedPluginClasspath =
                 pluginClasspathArgument?.removePrefix(PLUGIN_CLASSPATH_PREFIX)?.let { mapper.cacheClasspathArgument(it, ",") }
                     ?: emptyArray()
