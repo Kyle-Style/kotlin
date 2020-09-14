@@ -349,6 +349,16 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 upperBounds += oldArgument.getType()
             }
 
+            // Sometimes we get supertypes of SomeType and Any? here. Getting rid of Any?...
+            if (upperBounds.size > 1) {
+                var removed = false
+                upperBounds.removeAll {
+                    val toBeRemoved = !removed && it.isNullableAny()
+                    if (toBeRemoved) removed = true
+                    toBeRemoved
+                }
+            }
+
             require(newArgument is ConeCapturedType)
             @Suppress("UNCHECKED_CAST")
             newArgument.constructor.supertypes = upperBounds as List<ConeKotlinType>

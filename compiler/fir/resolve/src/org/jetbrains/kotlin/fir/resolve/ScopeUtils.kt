@@ -68,6 +68,16 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
                 FirIntegerLiteralTypeScope(useSiteSession, isUnsigned)
             } as FirTypeScope
         }
+        is ConeCapturedType -> {
+            val supertypes = constructor.supertypes ?: return null
+            FirTypeIntersectionScope.prepareIntersectionScope(
+                useSiteSession,
+                FirStandardOverrideChecker(useSiteSession),
+                supertypes.mapNotNullTo(mutableListOf()) {
+                    it.scope(useSiteSession, scopeSession)
+                }
+            )
+        }
         else -> null
     }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.CaptureStatus
 
 fun Candidate.resolveArgumentExpression(
@@ -264,9 +265,27 @@ fun Candidate.prepareCapturedType(argumentType: ConeKotlinType, context: Resolut
     return captureTypeFromExpressionOrNull(argumentType, context) ?: argumentType
 }
 
+private fun ConeKotlinType.containsCapturedType(): Boolean =
+    when (this) {
+        is ConeCapturedType -> true
+        is ConeFlexibleType -> lowerBound.containsCapturedType() || upperBound.containsCapturedType()
+        is ConeDefinitelyNotNullType -> original.containsCapturedType()
+        is ConeClassLikeType -> typeArguments.any { it is ConeKotlinTypeProjection && it.type.containsCapturedType() }
+        else -> false
+    }
+
 private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType? {
     if (argumentType is ConeFlexibleType) {
         return captureTypeFromExpressionOrNull(argumentType.lowerBound, context)
+    }
+    if (argumentType.containsCapturedType()) {
+        val approximator = context.session.inferenceComponents.approximator
+        val approximatedType = approximator.approximateToSuperType(
+            argumentType, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation
+        )
+        if (approximatedType is ConeKotlinType) {
+            return captureTypeFromExpressionOrNull(approximatedType, context)
+        }
     }
 
     if (argumentType !is ConeClassLikeType) return null

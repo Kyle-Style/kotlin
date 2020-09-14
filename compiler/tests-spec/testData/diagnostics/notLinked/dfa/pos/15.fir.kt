@@ -13,16 +13,16 @@ fun case_1() {
         <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter1<*>?")!>a<!>
         val b = <!DEBUG_INFO_EXPRESSION_TYPE("InterfaceWithTypeParameter1<*> & InterfaceWithTypeParameter1<*>?")!>a<!>.ip1test1()
         if (b != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>b<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>b<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>b<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>b<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>b<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>b<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>b<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>b<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>b<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>b<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>b<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>b<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>b<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>b<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>b<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>b<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>b<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>b<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>b<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>b<!>.funNullableAny()
         }
     }
 }
@@ -121,20 +121,20 @@ fun case_8() {
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>, out kotlin.Comparable<*> & java.io.Serializable> & ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>, out kotlin.Comparable<*> & java.io.Serializable>?")!>x<!>.test1()
         val y = <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>, out kotlin.Comparable<*> & java.io.Serializable> & ClassWithTwoTypeParameters<out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>, out kotlin.Comparable<*> & java.io.Serializable>?")!>x<!>.test2()
         if (y != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable> & ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>?")!>y<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable> & ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>?")!>y<!>.test1()
-            val z = <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable> & ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>?")!>y<!>.test2()
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>)?!! & CapturedType(out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>)?")!>y<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>)?!! & CapturedType(out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>)?")!>y<!>.test1()
+            val z = <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>)?!! & CapturedType(out ClassWithTwoTypeParameters<out kotlin.Comparable<*> & java.io.Serializable, out kotlin.Comparable<*> & java.io.Serializable>)?")!>y<!>.test2()
             if (z != null) {
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.propT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.propNullableT
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.propNullableAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.funT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.funAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.funNullableT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Comparable<*> & java.io.Serializable & kotlin.Comparable<*>? & java.io.Serializable?")!>z<!>.funNullableAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?!! & CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?")!>z<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?!! & CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?")!>z<!>.equals(null)
+                <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?!! & CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?")!>z<!>.propT
+                <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?!! & CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?")!>z<!>.propAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?!! & CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?")!>z<!>.propNullableT
+                <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?!! & CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?")!>z<!>.propNullableAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?!! & CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?")!>z<!>.funT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?!! & CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?")!>z<!>.funAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?!! & CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?")!>z<!>.funNullableT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?!! & CapturedType(out kotlin.Comparable<*> & java.io.Serializable)?")!>z<!>.funNullableAny()
             }
         }
     }
@@ -152,17 +152,17 @@ fun case_9() {
         <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithTwoTypeParameters<*, *> & ClassWithTwoTypeParameters<*, *>?")!>x<!>.test1()
         val y = x.test2()
         if (y != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("CapturedType(*)?!! & CapturedType(*)?")!>y<!>.funNullableAny()
         }
     }
 }

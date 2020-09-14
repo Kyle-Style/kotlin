@@ -155,6 +155,9 @@ fun coneFlexibleOrSimpleType(
 
 fun ConeKotlinType.isExtensionFunctionType(session: FirSession): Boolean {
     val type = this.lowerBoundIfFlexible().fullyExpandedType(session)
+    if (type is ConeCapturedType) {
+        return type.constructor.supertypes?.any { it.isExtensionFunctionType(session) } == true
+    }
     return type.attributes.extensionFunctionType != null
 }
 

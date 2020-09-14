@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 class FirClassSubstitutionScope(
     private val session: FirSession,
@@ -131,15 +129,11 @@ class FirClassSubstitutionScope(
     }
 
     private fun ConeKotlinType.approximateCapturedCovariant(): ConeKotlinType {
-        return session.inferenceComponents.approximator.approximateToSuperType(
-            this, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation
-        ) as? ConeKotlinType ?: this
+        return this
     }
 
     private fun ConeKotlinType.approximateCapturedContravariant(): ConeKotlinType {
-        return session.inferenceComponents.approximator.approximateToSubType(
-            this, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation
-        ) as? ConeKotlinType ?: this
+        return this
     }
 
     private fun createFakeOverrideFunction(original: FirFunctionSymbol<*>): FirFunctionSymbol<*> {
