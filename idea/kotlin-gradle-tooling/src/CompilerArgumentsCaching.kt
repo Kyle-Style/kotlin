@@ -22,7 +22,7 @@ class CachedCompilerArgumentsBucket private constructor(
     val cachedClasspath: Array<Int>,
     val cachedPluginClasspath: Array<Int>,
     val cachedFriendPaths: Array<Int>
-) {
+) : Serializable {
     constructor(otherBucket: CachedCompilerArgumentsBucket) : this(
         arrayOf(*otherBucket.cachedGeneralArguments),
         arrayOf(*otherBucket.cachedClasspath),
@@ -45,8 +45,8 @@ class CachedCompilerArgumentsBucket private constructor(
 
             val pluginClasspathArgument = arguments.firstOrNull { it.startsWith(PLUGIN_CLASSPATH_PREFIX) }
             val friendPathsArgument = arguments.firstOrNull { it.startsWith(FRIEND_PATH_PREFIX) }
-            val classpathArgument = arguments.mapIndexedNotNull { index, s ->
-                arguments[index + 1].takeIf { s in classpathArgPointers }
+            val classpathArgument = arguments.mapIndexed { index, s ->
+                if (s in classpathArgPointers) arguments[index + 1] else null
             }.firstOrNull()
 
             // TODO(ychernyshev) Does the order of arguments required here?
