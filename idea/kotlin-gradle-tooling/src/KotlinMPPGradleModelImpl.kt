@@ -103,16 +103,6 @@ data class KotlinCompilationArgumentsImpl(
     )
 }
 
-data class KotlinCompilationCachedArgumentsImpl(
-    override val defaultArguments: Array<Int>,
-    override val currentArguments: Array<Int>
-) : KotlinCompilationCachedArguments {
-    constructor(arguments: KotlinCompilationCachedArguments) : this(
-        arguments.defaultArguments,
-        arguments.currentArguments
-    )
-}
-
 data class KotlinNativeCompilationExtensionsImpl(
     override val konanTarget: String
 ) : KotlinNativeCompilationExtensions {
@@ -124,8 +114,7 @@ data class KotlinCompilationImpl(
     override val sourceSets: Collection<KotlinSourceSet>,
     override val dependencies: Array<KotlinDependencyId>,
     override val output: KotlinCompilationOutput,
-    override val arguments: KotlinCompilationArguments,
-    override val dependencyClasspath: Array<String>,
+    override val cachedArgsInfo: CachedArgsInfo,
     override val kotlinTaskProperties: KotlinTaskProperties,
     override val nativeExtensions: KotlinNativeCompilationExtensions?
 ) : KotlinCompilation {
@@ -140,8 +129,7 @@ data class KotlinCompilationImpl(
         }.toList(),
         kotlinCompilation.dependencies,
         KotlinCompilationOutputImpl(kotlinCompilation.output),
-        KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
-        kotlinCompilation.dependencyClasspath,
+        CachedArgsInfoImpl(kotlinCompilation.cachedArgsInfo),
         KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties),
         kotlinCompilation.nativeExtensions?.let(::KotlinNativeCompilationExtensionsImpl)
     ) {
@@ -237,7 +225,8 @@ data class KotlinMPPGradleModelImpl(
     override val targets: Collection<KotlinTarget>,
     override val extraFeatures: ExtraFeatures,
     override val kotlinNativeHome: String,
-    override val dependencyMap: Map<KotlinDependencyId, KotlinDependency>
+    override val dependencyMap: Map<KotlinDependencyId, KotlinDependency>,
+    override val compilerArgumentsMapper: ICompilerArgumentsMapper
 ) : KotlinMPPGradleModel {
 
     constructor(mppModel: KotlinMPPGradleModel, cloningCache: MutableMap<Any, Any>) : this(
@@ -258,7 +247,8 @@ data class KotlinMPPGradleModelImpl(
             mppModel.extraFeatures.isNativeDependencyPropagationEnabled
         ),
         mppModel.kotlinNativeHome,
-        mppModel.dependencyMap.map { it.key to it.value.deepCopy(cloningCache) }.toMap()
+        mppModel.dependencyMap.map { it.key to it.value.deepCopy(cloningCache) }.toMap(),
+        CompilerArgumentsMapperWithMerge().apply { mergeMapper(mppModel.compilerArgumentsMapper) }
     )
 }
 

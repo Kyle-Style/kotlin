@@ -93,11 +93,6 @@ interface KotlinCompilationArguments : Serializable {
     val currentArguments: Array<String>
 }
 
-interface KotlinCompilationCachedArguments : Serializable {
-    val defaultArguments: Array<Int>
-    val currentArguments: Array<Int>
-}
-
 interface KotlinNativeCompilationExtensions : Serializable {
     val konanTarget: String // represents org.jetbrains.kotlin.konan.target.KonanTarget
 }
@@ -105,8 +100,7 @@ interface KotlinNativeCompilationExtensions : Serializable {
 interface KotlinCompilation : KotlinModule {
     val sourceSets: Collection<KotlinSourceSet>
     val output: KotlinCompilationOutput
-    val arguments: KotlinCompilationArguments
-    val dependencyClasspath: Array<String>
+    val cachedArgsInfo: CachedArgsInfo
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
     val kotlinTaskProperties: KotlinTaskProperties
@@ -185,6 +179,7 @@ interface KotlinMPPGradleModel : Serializable {
     val targets: Collection<KotlinTarget>
     val extraFeatures: ExtraFeatures
     val kotlinNativeHome: String
+    val compilerArgumentsMapper: ICompilerArgumentsMapper
 
     companion object {
         const val NO_KOTLIN_NATIVE_HOME = ""
