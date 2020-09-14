@@ -310,8 +310,9 @@ class KotlinFacetSettings {
     var classpathParts: List<String> = emptyList()
         set(value) {
             field = value.map { PathUtil.toSystemIndependentName(it) }
-            (compilerArguments as? K2JVMCompilerArguments)?.also {
-                it.classpath = classpath
+            when (compilerArguments) {
+                is K2JVMCompilerArguments -> (compilerArguments as? K2JVMCompilerArguments)?.classpath = classpath
+                is K2MetadataCompilerArguments -> (compilerArguments as? K2MetadataCompilerArguments)?.classpath = classpath
             }
         }
 
