@@ -230,7 +230,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (this is ErrorTypeConstructor) return emptyList()
         //require(this is ConeSymbol)
         return when (this) {
-            is ConeTypeVariableTypeConstructor -> emptyList()
+            is ConeTypeVariableTypeConstructor -> listOf(session.builtinTypes.anyType.type)
             is ConeTypeParameterLookupTag -> symbol.fir.bounds.map { it.coneType }
             is ConeClassLikeLookupTag -> {
                 when (val symbol = toClassLikeSymbol().also { it?.ensureResolved(FirResolvePhase.TYPES, session) }) {
