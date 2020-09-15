@@ -130,6 +130,9 @@ private fun readV4Config(element: Element): KotlinFacetSettings {
         readElementsList(element, "classpathParts", "classpathPart")?.let {
             classpathParts = it
         }
+        readElementsList(element, "additionalArguments", "additionalArgument")?.let {
+            compilerSettings?.additionalArguments = it.joinToString(" ")
+        }
     }
 }
 
@@ -436,8 +439,11 @@ private fun KotlinFacetSettings.writeV4Config(element: Element) {
     (compilerArguments as? K2JVMCompilerArguments)?.also {
         it.classpath = null
     }
+    val additionalArguments = compilerSettings?.additionalArguments?.split(" ") ?: emptyList()
+    compilerSettings?.additionalArguments = ""
     writeV2AndLaterConfig(element)
     saveElementsList(element, classpathParts, "classpathParts", "classpathPart")
+    saveElementsList(element, additionalArguments, "additionalArguments", "additionalArgument")
 }
 
 
