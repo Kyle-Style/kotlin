@@ -1959,6 +1959,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");
         }
 
+        @TestMetadata("doubleGenericVararg.kt")
+        public void testDoubleGenericVararg() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/doubleGenericVararg.kt");
+        }
+
         @TestMetadata("flexibleTypeVarAgainstNull.kt")
         public void testFlexibleTypeVarAgainstNull() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/flexibleTypeVarAgainstNull.kt");

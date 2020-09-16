@@ -1,0 +1,4 @@
+FILE: doubleGenericVararg.kt
+    public final fun <T : R|kotlin/Double|> testDouble(d: R|kotlin/Double|, v: R|T|, vararg va: R|kotlin/Array<out T>|): R|kotlin/Unit| {
+        lval first: R|T| = R|<local>/va|.R|FakeOverride<kotlin/Array.get: R|T|>|(Int(0))
+    }
