@@ -68,6 +68,8 @@ private fun ConeKotlinType.getPrimitiveTypeOrSupertype(): ConeClassLikeType? =
             this
         this is ConeFlexibleType ->
             this.lowerBound.getPrimitiveTypeOrSupertype()
+        this is ConeCapturedType ->
+            this.constructor.supertypes?.firstOrNull()?.getPrimitiveTypeOrSupertype()
         else ->
             null
     }
