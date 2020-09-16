@@ -9,3 +9,9 @@ FILE fqName:<root> fileName:/doubleGenericVararg.kt
         CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=T of <root>.testDouble origin=null
           $this: GET_VAR 'va: kotlin.Array<out T of <root>.testDouble> [vararg] declared in <root>.testDouble' type=kotlin.Array<out T of <root>.testDouble> origin=null
           index: CONST Int type=kotlin.Int value=0
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun ieee754equals (arg0: kotlin.Double?, arg1: kotlin.Double?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+          arg0: GET_VAR 'd: kotlin.Double declared in <root>.testDouble' type=kotlin.Double origin=null
+          arg1: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=T of <root>.testDouble origin=null
+            $this: GET_VAR 'va: kotlin.Array<out T of <root>.testDouble> [vararg] declared in <root>.testDouble' type=kotlin.Array<out T of <root>.testDouble> origin=null
+            index: CONST Int type=kotlin.Int value=0
