@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -48,17 +50,22 @@ class FirJvmClassCodegen(
     session: FirSession,
 ) : ClassCodegen(irClass, context, parentFunction) {
     private val serializerExtension = FirJvmSerializerExtension(session, visitor.serializationBindings, state, irClass, typeMapper)
+
+    private val approximator = object : AbstractTypeApproximator(session.typeContext) {
+        override fun createErrorType(message: String): SimpleTypeMarker {
+            return ConeKotlinErrorType(ConeIntermediateDiagnostic(message))
+        }
+    }
+
     private val serializer: FirElementSerializer? =
         when (val metadata = irClass.metadata) {
             is FirMetadataSource.Class -> FirElementSerializer.create(
-                metadata.klass, serializerExtension, (parentClassCodegen as? FirJvmClassCodegen)?.serializer
+                metadata.klass, serializerExtension, (parentClassCodegen as? FirJvmClassCodegen)?.serializer, approximator
             )
-            is FirMetadataSource.File -> FirElementSerializer.createTopLevel(session, serializerExtension)
-            is FirMetadataSource.Function -> FirElementSerializer.createForLambda(session, serializerExtension)
+            is FirMetadataSource.File -> FirElementSerializer.createTopLevel(session, serializerExtension, approximator)
+            is FirMetadataSource.Function -> FirElementSerializer.createForLambda(session, serializerExtension, approximator)
             else -> null
         }
-
-    private val approximator = object : AbstractTypeApproximator(session.typeContext) {}
 
     private fun FirTypeRef.approximated(
         toSuper: Boolean,
