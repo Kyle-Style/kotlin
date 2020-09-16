@@ -1,0 +1,11 @@
+FILE fqName:<root> fileName:/doubleGenericVararg.kt
+  FUN name:testDouble visibility:public modality:FINAL <T> (d:kotlin.Double, v:T of <root>.testDouble, va:kotlin.Array<out T of <root>.testDouble>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Double]
+    VALUE_PARAMETER name:d index:0 type:kotlin.Double
+    VALUE_PARAMETER name:v index:1 type:T of <root>.testDouble
+    VALUE_PARAMETER name:va index:2 type:kotlin.Array<out T of <root>.testDouble> varargElementType:T of <root>.testDouble [vararg]
+    BLOCK_BODY
+      VAR name:first type:T of <root>.testDouble [val]
+        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=T of <root>.testDouble origin=GET_ARRAY_ELEMENT
+          $this: GET_VAR 'va: kotlin.Array<out T of <root>.testDouble> [vararg] declared in <root>.testDouble' type=kotlin.Array<out T of <root>.testDouble> origin=null
+          index: CONST Int type=kotlin.Int value=0

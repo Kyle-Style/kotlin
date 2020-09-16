@@ -1737,6 +1737,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");
         }
 
+        @TestMetadata("doubleGenericVararg.kt")
+        public void testDoubleGenericVararg() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/doubleGenericVararg.kt");
+        }
+
         @TestMetadata("FirBuilder.kt")
         public void testFirBuilder() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/FirBuilder.kt");
